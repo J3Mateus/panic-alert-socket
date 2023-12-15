@@ -1,0 +1,9 @@
+# docker-compose.yml
+version: '3'
+services:
+  express-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
