@@ -100,4 +100,4 @@ io.on("connection", (socket) => {
   io.emit('user_connected', connectedUsers);
 });
 
-httpServer.listen(3001);
+httpServer.listen(3000);
