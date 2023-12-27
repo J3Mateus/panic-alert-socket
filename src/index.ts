@@ -16,7 +16,7 @@ const io = new Server(httpServer, {
  });
 
 const fixedRoomName = "panicRoom"; // Defina o nome fixo da sala aqui
-const baseURL = process.env.URL_BACK_END || 'http://localhost:3000';
+const baseURL = process.env.URL_BACK_END || 'http://localhost:8000';
 let connectedUsers : Array<User> = [];
 const managerUsers = new ManagerUser(connectedUsers);
 
@@ -43,8 +43,8 @@ setInterval(async () => {
       all: 'true',
     };
 
-    const responseFromListAlert = await requestFromListAlert.get<{results: object[]}>('api/button/get/list/all?offset=5&limit=5',responseFromToken.access,queryParams)
-    io.emit("list_alert",responseFromListAlert.results);
+    const responseFromListAlert = await requestFromListAlert.get<{results: object[]}>('api/button/get/list/all?status=ocorrencia_iniciada&all=true',responseFromToken.access,queryParams)
+    io.emit("list_alert",responseFromListAlert);
 
   } catch (error) {
     if (error instanceof Error) {
@@ -68,6 +68,27 @@ io.on("connection", (socket) => {
     socket.to(fixedRoomName).emit("new_alert",mensagem)
   })
 
+  socket.on('create_room', (roomName) => {
+    // Lógica para criar uma nova sala
+    // Por exemplo, você pode simplesmente permitir que os usuários se juntem a qualquer sala que não exista atualmente
+    if (!io.sockets.adapter.rooms.has(roomName)) {
+      socket.join(roomName);
+      console.log(`Nova sala criada: ${roomName}`);
+    } else {
+      console.log(`Sala ${roomName} já existe`);
+    }
+  });
+
+  socket.on("join_room_alert",(uuid)=>{
+    console.log(`se juntou a sala : ${uuid}`)
+    socket.join(uuid)
+  })
+
+  socket.on("status_update",(data:{room:string,status: string})=>{
+    const { room, status } = data
+    console.log(data);
+    socket.to(room).emit("new_status",status)
+  })
 
   socket.on("disconnect",()=>{
     const disconnectedUser = socket.id;
@@ -79,4 +100,4 @@ io.on("connection", (socket) => {
   io.emit('user_connected', connectedUsers);
 });
 
-httpServer.listen(3000);
+httpServer.listen(3001);
