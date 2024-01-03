@@ -21,40 +21,6 @@ let connectedUsers : Array<User> = [];
 const managerUsers = new ManagerUser(connectedUsers);
 
 
-setInterval(async () => {
-  try {
-    const requestFromToken = new ApiRequest(baseURL)
-
-    const data: object  = {
-      "email": "admin@admin.com",
-      "password": "admin"
-    }
-
-    const responseFromToken = await requestFromToken.post<{ refresh: string,access: string }>('api/auth/token/login',data);
-
-    const tokenAuthConfig: AuthConfig = {
-      type: 'token',
-      token: responseFromToken.access,
-    };
-
-    const requestFromListAlert = new ApiRequest(baseURL,tokenAuthConfig)
-
-    const queryParams = {
-      all: 'true',
-    };
-
-    const responseFromListAlert = await requestFromListAlert.get<{results: object[]}>('api/button/get/list/all?status=ocorrencia_iniciada&all=true',responseFromToken.access,queryParams)
-    io.emit("list_alert",responseFromListAlert);
-
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    } else {
-      console.error('Erro desconhecido:', JSON.stringify(error));
-    }      
-  }
-}, 12000);
-
 
 io.on("connection", (socket) => {
   const newUser: User = new User(socket.id);
