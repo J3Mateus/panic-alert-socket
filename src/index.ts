@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
   })
 
   socket.on("alert",(mensagem)=>{
-    socket.to(fixedRoomName).emit("new_alert",mensagem)
+    socket.to(mensagem.school.id).emit("new_alert",mensagem)
   })
 
   socket.on('create_room', (roomName) => {
@@ -55,6 +55,12 @@ io.on("connection", (socket) => {
     console.log(data);
     socket.to(room).emit("new_status",status)
   })
+
+  socket.on("update_item_in_list_alert", (data) => {
+    // Lógica para atualizar a lista com os dados recebidos
+    console.log("Aqui")
+    io.emit("update_list_alert"); // Emitir uma nova lista para o cliente
+  });
 
   socket.on("disconnect",()=>{
     const disconnectedUser = socket.id;
