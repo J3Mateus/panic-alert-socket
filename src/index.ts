@@ -36,6 +36,7 @@ io.on("connection", (socket) => {
   })
 
   socket.on('create_room', (roomName) => {
+    console.log("Criando sala:"+roomName)
     // Lógica para criar uma nova sala
     // Por exemplo, você pode simplesmente permitir que os usuários se juntem a qualquer sala que não exista atualmente
     if (!io.sockets.adapter.rooms.has(roomName)) {
