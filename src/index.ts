@@ -68,4 +68,6 @@ io.on("connection", (socket) => {
   io.emit('user_connected', connectedUsers);
 });
 
-httpServer.listen(port);
+httpServer.listen(port,()=>{
+  console.log(`Rodando aplicação na porta ${port}`)
+});
