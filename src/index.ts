@@ -17,6 +17,7 @@ const io = new Server(httpServer, {
 
 const fixedRoomName = "panicRoom"; // Defina o nome fixo da sala aqui
 const baseURL = process.env.URL_BACK_END || 'http://localhost:8000';
+const port = process.env.PORT || 3002 
 let connectedUsers : Array<User> = [];
 const managerUsers = new ManagerUser(connectedUsers);
 
@@ -31,7 +32,7 @@ io.on("connection", (socket) => {
   })
 
   socket.on("alert",(mensagem)=>{
-    socket.to(mensagem.school.id).emit("new_alert",mensagem)
+    socket.to(mensagem.countie.id).emit("new_alert",mensagem)
   })
 
   socket.on('create_room', (roomName) => {
@@ -39,26 +40,20 @@ io.on("connection", (socket) => {
     // Por exemplo, você pode simplesmente permitir que os usuários se juntem a qualquer sala que não exista atualmente
     if (!io.sockets.adapter.rooms.has(roomName)) {
       socket.join(roomName);
-      console.log(`Nova sala criada: ${roomName}`);
-    } else {
-      console.log(`Sala ${roomName} já existe`);
-    }
+    } 
   });
 
   socket.on("join_room_alert",(uuid)=>{
-    console.log(`se juntou a sala : ${uuid}`)
     socket.join(uuid)
   })
 
   socket.on("status_update",(data:{room:string,status: string})=>{
     const { room, status } = data
-    console.log(data);
     socket.to(room).emit("new_status",status)
   })
 
   socket.on("update_item_in_list_alert", (data) => {
     // Lógica para atualizar a lista com os dados recebidos
-    console.log("Aqui")
     io.emit("update_list_alert"); // Emitir uma nova lista para o cliente
   });
 
@@ -72,4 +67,4 @@ io.on("connection", (socket) => {
   io.emit('user_connected', connectedUsers);
 });
 
-httpServer.listen(3000);
+httpServer.listen(port);
