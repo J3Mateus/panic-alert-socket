@@ -17,7 +17,7 @@ const io = new Server(httpServer, {
 
 const fixedRoomName = "panicRoom"; // Defina o nome fixo da sala aqui
 const baseURL = process.env.URL_BACK_END || 'http://localhost:8000';
-const port = process.env.PORT || 3002 
+const port = process.env.PORT || 3000 
 let connectedUsers : Array<User> = [];
 const managerUsers = new ManagerUser(connectedUsers);
 
